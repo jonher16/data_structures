@@ -107,6 +107,31 @@ class BinarySearchTreeNode():
     def calculate_sum(self):
         elements = self.inOrderTraversal()
         return sum(elements)
+    
+    def delete(self, data):
+        if data < self.data:
+            if self.left:
+                self.left = self.left.delete(data)
+        elif data > self.data:
+            if self.right:
+                self.right = self.right.delete(data)
+        else:
+            if not self.left and not self.right:
+                return None
+            elif not self.left:
+                return self.right
+            elif not self.right:
+                return self.left
+            else:
+                min_value_right = self.right.find_min()
+                self.data = min_value_right
+                self.right = self.right.delete(min_value_right)
+
+        return self
+            
+
+
+            
         
     
 def buildTree(elements):
@@ -178,3 +203,44 @@ def test_single_node_tree():
     assert tree.find_max() == 42
     assert tree.calculate_sum() == 42
     assert tree.inOrderTraversal() == [42]
+
+# Test: Deleting a Leaf Node
+def test_delete_leaf_node():
+    elements = [17, 4, 1, 20, 9, 23, 18, 34]
+    sample_bst = buildTree(elements)
+    sample_bst = sample_bst.delete(34)
+    assert sample_bst.inOrderTraversal() == [1, 4, 9, 17, 18, 20, 23]
+    assert sample_bst.find_max() == 23
+
+# Test: Deleting a Node with One Child
+def test_delete_node_with_one_child():
+    elements = [17, 4, 1, 20, 9, 23, 18, 34]
+    sample_bst = buildTree(elements)
+    sample_bst = sample_bst.delete(23)
+    assert sample_bst.inOrderTraversal() == [1, 4, 9, 17, 18, 20, 34]
+    assert sample_bst.find_max() == 34
+
+# Test: Deleting a Node with Two Children
+def test_delete_node_with_two_children():
+    elements = [17, 4, 1, 20, 9, 23, 18, 34]
+    sample_bst = buildTree(elements)
+    sample_bst = sample_bst.delete(20)
+    assert sample_bst.inOrderTraversal() == [1, 4, 9, 17, 18, 23, 34]
+    assert sample_bst.calculate_sum() == 106  # Sum after deletion
+
+# Test: Deleting the Root Node
+def test_delete_root_node():
+    elements = [17, 4, 1, 20, 9, 23, 18, 34]
+    sample_bst = buildTree(elements)
+    sample_bst = sample_bst.delete(17)
+    # The new root should be 18 (inorder successor)
+    assert sample_bst.data == 18
+    assert sample_bst.inOrderTraversal() == [1, 4, 9, 18, 20, 23, 34]
+
+# Test: Deleting Non-existent Node
+def test_delete_nonexistent_node():
+    elements = [17, 4, 1, 20, 9, 23, 18, 34]
+    sample_bst = buildTree(elements)
+    sample_bst = sample_bst.delete(999)
+    # Tree should remain unchanged
+    assert sample_bst.inOrderTraversal() == [1, 4, 9, 17, 18, 20, 23, 34]
