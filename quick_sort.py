@@ -1,5 +1,3 @@
-from turtledemo.sorting_animate import partition
-
 
 def swap(a, b, array):
     if a!=b:
@@ -16,7 +14,7 @@ def hoare_partition(elements, start, end):
 
         while start < len(elements) and elements[start] <= pivot:
             start += 1
-        while elements[end] >= pivot:
+        while elements[end] > pivot:
             end -= 1
         if start < end:
             swap(start, end, elements)
@@ -26,25 +24,19 @@ def hoare_partition(elements, start, end):
     return end
 
 def lomuto_partition(elements, start, end):
+    # Use the last element as the pivot for Lomuto's partition
+    pivot = elements[end]
+    p = start - 1  # Set i to one position before start
 
-    pivot_index = end
-    pivot = elements[pivot_index]
-    i = 0
+    # Traverse through the array and rearrange elements
+    for i in range(start, end):
+        if elements[i] <= pivot:
+            p += 1
+            swap(p, i, elements)
 
-    while i < end:
-
-        while elements[start] < pivot:
-            start += 1
-
-        i = start
-
-        while elements[i] > pivot and i < len(elements):
-            i += 1
-
-        swap(start, i, elements)
-
-    return start
-
+    # Place the pivot element at its correct position
+    swap(p + 1, end, elements)
+    return p + 1  # Return the index of the pivot
 
 def quick_sort(elements, start, end, partition='hoare'):
     if start < end:
@@ -60,11 +52,11 @@ def quick_sort(elements, start, end, partition='hoare'):
 
 if __name__ == "__main__":
     #Using Hoare Partition
-    elements = [11, 9, 29, 7, 2, 15, 28]
+    elements = [8, 108, 11, 9, 29, 7, 2, 15, 28, 1, 3, 3]
     quick_sort(elements, 0 , len(elements)-1, partition='hoare')
     print(elements)
     #Using Lomuto Partition
-    elements = [11, 9, 29, 7, 2, 15, 28]
+    elements = [8,109, 11, 9, 29, 7, 2, 15, 28, 1, 3, 3]
     quick_sort(elements, 0, len(elements) - 1, partition='lomuto')
     print(elements)
 
